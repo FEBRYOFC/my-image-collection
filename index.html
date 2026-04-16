@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MY ISTRI - Koleksi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #000000;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            color: white;
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .hero-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 900px;
+            height: 450px;
+            background: radial-gradient(ellipse at center, rgba(128, 0, 255, 0.22), rgba(0,0,0,0) 75%);
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(45px);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(1px 1px at 15% 25%, #ffffff0c, transparent),
+                        radial-gradient(1.2px 1.2px at 78% 65%, #b77eff12, transparent);
+            background-size: 280px 280px, 320px 320px;
+            background-repeat: repeat;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 0.5rem;
+        }
+
+        .judul-utama {
+            font-size: clamp(3rem, 12vw, 5.8rem);
+            font-weight: 800;
+            letter-spacing: 10px;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .judul-utama .my {
+            color: #ffffff;
+            text-shadow: 0 0 6px rgba(255,255,255,0.3);
+        }
+        .judul-utama .girls {
+            color: #b77eff;
+            text-shadow: 0 0 14px #b77effaa;
+        }
+
+        .koleksi-label {
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 6px;
+            margin-bottom: 1.4rem;
+            text-transform: uppercase;
+            color: #d0b0ff;
+        }
+
+        .typing-area {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .madeby-label {
+            color: #c0b0e0;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .typing-wrapper {
+            display: inline-flex;
+            align-items: baseline;
+            background: rgba(0, 0, 0, 0.55);
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #b77eff30;
+        }
+        #typingContainer {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 2px;
+            white-space: nowrap;
+        }
+        #typingName {
+            font-weight: 700;
+            color: #0a4cff;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+        }
+        .cursor-blink {
+            font-weight: bold;
+            color: #b77eff;
+            animation: blink 1s step-end infinite;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin-left: 2px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .search-section {
+            margin: 0.8rem auto 1.2rem auto;
+            max-width: 420px;
+            text-align: center;
+        }
+        .search-label {
+            font-size: 0.85rem;
+            color: #b77eff;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .search-box {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 0.3rem 0.3rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #b77eff50;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            padding: 10px 0;
+            width: 190px;
+            outline: none;
+            font-family: 'Space Mono', monospace;
+        }
+        .search-box input::placeholder {
+            color: #5a4a8a;
+        }
+        .search-box button {
+            background: linear-gradient(135deg, #b77eff, #7a3eff);
+            border: none;
+            padding: 7px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .search-box button:hover {
+            transform: scale(0.96);
+        }
+        .search-status {
+            font-size: 0.7rem;
+            margin-top: 10px;
+            color: #a990e0;
+            font-family: monospace;
+        }
+
+        .counter-wrapper {
+            text-align: center;
+            margin: 0.5rem 0 0.8rem;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .counter-info {
+            font-size: 0.85rem;
+            color: #a07eff;
+            background: rgba(128, 90, 255, 0.1);
+            display: inline-block;
+            padding: 0.3rem 1.5rem;
+            border-radius: 30px;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* Social Icons */
+        .social-icons {
+            display: inline-flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .social-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+        .social-icon:hover {
+            transform: scale(1.05);
+        }
+        .whatsapp-icon {
+            background: #25D366;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 0 10px rgba(37, 211, 102, 0.5);
+        }
+        .tiktok-icon {
+            background: #000000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #ffffff;
+            border: 1px solid #ff0050;
+            box-shadow: 0 0 8px rgba(255, 0, 80, 0.5);
+        }
+        .social-label {
+            font-size: 0.6rem;
+            color: #a07eff;
+            font-family: monospace;
+        }
+
+        .all-collections-header {
+            text-align: center;
+            margin: 1.5rem 0 1.2rem 0;
+            padding: 0.6rem;
+            border-top: 1px solid #b77eff30;
+            border-bottom: 1px solid #b77eff30;
+            background: rgba(0,0,0,0.3);
+            font-weight: 500;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: #b0a0d0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .gallery-item {
+            transition: transform 0.2s ease;
+            border-radius: 20px;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .photo-frame {
+            position: relative;
+            width: 100%;
+            background: #08080c;
+            border-radius: 24px;
+            border: 2px solid #b77eff;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 8px 20px rgba(0,0,0,0.6);
+            overflow: hidden;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+            min-height: 200px;
+        }
+        .photo-frame:hover {
+            box-shadow: 0 0 0 2px #b77eff, 0 12px 28px black;
+        }
+        .gallery-item.special .photo-frame {
+            border: 2px solid #b77eff;
+            box-shadow: 0 0 0 3px rgba(183,126,255,0.6);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.25s ease;
+        }
+        .gallery-item:hover .photo-frame img {
+            transform: scale(1.01);
+        }
+
+        .placeholder-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #0d0d16;
+            color: #b77effcc;
+            font-size: 0.85rem;
+            text-align: center;
+            gap: 12px;
+            padding: 2rem;
+        }
+
+        .caption-foto {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #b08cff;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .gallery-item.special {
+            grid-column: span 2;
+        }
+
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: rgba(0,0,0,0.5);
+            border-radius: 36px;
+            border: 1px dashed #b77eff60;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .gallery-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .gallery-item.special { grid-column: span 1; }
+            .counter-wrapper { flex-direction: column; gap: 10px; }
+        }
+
+        .custom-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-top: 1px solid rgba(128, 90, 255, 0.2);
+            font-size: 0.7rem;
+            color: #6a5a9a;
+        }
+        .footer-copyright {
+            margin-bottom: 6px;
+            font-family: monospace;
+        }
+        .footer-datetime {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: #8a7ab0;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease;
+        }
+        .loading-card {
+            background: #010101;
+            border-radius: 32px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid #b77eff55;
+            width: 280px;
+        }
+        .loading-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.2rem auto;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 1.5px solid #b77eff;
+        }
+        .loading-text {
+            color: #c0b0e0;
+            margin: 0.5rem 0 1rem;
+            font-size: 0.9rem;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #1a1a24;
+            border-radius: 40px;
+            height: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #b77eff, #3a86ff);
+            transition: width 0.15s linear;
+        }
+        .timer-text {
+            font-size: 0.7rem;
+            margin-top: 14px;
+            color: #8a7ab0;
+        }
+        .loading-overlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div class="hero-glow"></div>
+<div class="stars"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-card">
+        <img class="loading-avatar" src="https://n.uguu.se/ztaVUtjW.jpeg" alt="koleksi loading">
+        <div class="loading-text">Membuka Halaman Koleksi...</div>
+        <div class="progress-container"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="timer-text" id="timerText">20 detik menuju koleksi</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="hero">
+        <div class="judul-utama">
+            <span class="my">MY</span> <span class="girls">ISTRI</span>
+        </div>
+        <div class="koleksi-label">K O L E K S I</div>
+        
+        <div class="typing-area">
+            <span class="madeby-label">Made By:</span>
+            <div class="typing-wrapper">
+                <div id="typingContainer">
+                    <span id="typingName"></span>
+                    <span class="cursor-blink" id="cursorSpan">|</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-label">cari koleksi berdasarkan nomor / ID</div>
+            <div class="search-box">
+                <input type="number" id="searchInput" placeholder="contoh: 1, 5, 42" min="1">
+                <button id="searchBtn">Cari</button>
+                <button id="resetBtn" style="background:#3a2a6a;">Reset</button>
+            </div>
+            <div id="searchStatus" class="search-status"></div>
+        </div>
+    </div>
+
+    <div class="counter-wrapper">
+        <div id="dynamicCounter" class="counter-info">Total Images: --</div>
+        <div class="social-icons">
+            <a class="social-icon" href="https://wa.me/6288808498725?text=" target="_blank" id="whatsappLink">
+                <div class="whatsapp-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <span class="social-label">Bot Whatsapp</span>
+            </a>
+            <a class="social-icon" href="#" id="tiktokLink" target="_blank">
+                <div class="tiktok-icon">
+                    <i class="fab fa-tiktok"></i>
+                </div>
+                <span class="social-label">TikTok</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="all-collections-header">
+        ALL COLLECTIONS
+    </div>
+
+    <div class="gallery-grid" id="galeriGrid"></div>
+
+    <div class="custom-footer">
+        <div class="footer-copyright">Copyright: FebryJW 🚀</div>
+        <div class="footer-datetime" id="datetimeDisplay"></div>
+    </div>
+</div>
+
+<script>
+    // ========= KONFIGURASI =========
+    const FOLDER_PATH = "MY/";
+    const EXT = ".jpg";
+    const START_INDEX = 1;
+    
+    const galleryGrid = document.getElementById('galeriGrid');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const progressFill = document.getElementById('progressFill');
+    const timerTextSpan = document.getElementById('timerText');
+    const typingNameSpan = document.getElementById('typingName');
+    const cursorSpan = document.getElementById('cursorSpan');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const searchStatus = document.getElementById('searchStatus');
+    const dynamicCounter = document.getElementById('dynamicCounter');
+    const datetimeDisplay = document.getElementById('datetimeDisplay');
+    const tiktokLink = document.getElementById('tiktokLink');
+    
+    let allImages = [];
+    let currentFiltered = [];
+    let retryQueue = []; // untuk retry gambar yang gagal
+    
+    // ========= JAM REAL TIME (WIB) =========
+    function updateDateTime() {
+        const now = new Date();
+        const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+        const hours = wibTime.getUTCHours().toString().padStart(2, '0');
+        const minutes = wibTime.getUTCMinutes().toString().padStart(2, '0');
+        const seconds = wibTime.getUTCSeconds().toString().padStart(2, '0');
+        
+        const day = wibTime.getUTCDate().toString().padStart(2, '0');
+        const month = (wibTime.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = wibTime.getUTCFullYear();
+        
+        datetimeDisplay.innerHTML = `${hours}:${minutes}:${seconds} WIB · ${day}/${month}/${year}`;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+    
+    // ========= TIKTOK LINK (ganti dengan username yang diinginkan) =========
+    // Silakan ganti username TikTok di sini
+    const TIKTOK_USERNAME = "febryjw"; // ganti dengan username tiktok asli
+    tiktokLink.href = `https://www.tiktok.com/@${TIKTOK_USERNAME}`;
+    
+    // ========= EFEK NGETIK: FebryJW🚀 + cursor =========
+    const fullName = "FebryJW🚀";
+    let currentTyped = "";
+    let timeoutId = null;
+    let waitTimeout = null;
+    
+    function updateTypingDisplay() {
+        typingNameSpan.innerText = currentTyped;
+    }
+    
+    function startTypingCycle() {
+        function typeNext() {
+            if (currentTyped.length < fullName.length) {
+                currentTyped = fullName.substring(0, currentTyped.length + 1);
+                updateTypingDisplay();
+                timeoutId = setTimeout(typeNext, 120);
+            } else {
+                if (waitTimeout) clearTimeout(waitTimeout);
+                waitTimeout = setTimeout(() => {
+                    startDeleting();
+                }, 3000);
+            }
+        }
+        
+        function startDeleting() {
+            function deleteNext() {
+                if (currentTyped.length > 0) {
+                    currentTyped = currentTyped.substring(0, currentTyped.length - 1);
+                    updateTypingDisplay();
+                    timeoutId = setTimeout(deleteNext, 100);
+                } else {
+                    if (waitTimeout) clearTimeout(waitTimeout);
+                    waitTimeout = setTimeout(() => {
+                        startTypingCycle();
+                    }, 3000);
+                }
+            }
+            if (timeoutId) clearTimeout(timeoutId);
+            deleteNext();
+        }
+        
+        if (timeoutId) clearTimeout(timeoutId);
+        if (waitTimeout) clearTimeout(waitTimeout);
+        typeNext();
+    }
+    
+    // ========= DETEKSI GAMBAR SAMPAI MAKSIMAL =========
+    async function fastImageCheck(url, timeoutMs = 400) {
+        return new Promise((resolve) => {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), timeoutMs);
+            fetch(url, { method: 'HEAD', signal: controller.signal, cache: 'no-store' })
+                .then(res => {
+                    clearTimeout(tid);
+                    resolve(res.ok);
+                })
+                .catch(() => {
+                    clearTimeout(tid);
+                    // coba dengan image method
+                    const img = new Image();
+                    img.onload = () => resolve(true);
+                    img.onerror = () => resolve(false);
+                    img.src = url;
+                    setTimeout(() => {
+                        if (!img.complete) resolve(false);
+                    }, 250);
+                });
+        });
+    }
+    
+    async function detectAllImages() {
+        const found = [];
+        let i = START_INDEX;
+        let consecutiveFails = 0;
+        const MAX_CONSECUTIVE = 5;
+        
+        while (true) {
+            const imgUrl = `${FOLDER_PATH}${i}${EXT}`;
+            const exists = await fastImageCheck(imgUrl, 400);
+            
+            if (exists) {
+                found.push({
+                    index: i,
+                    src: imgUrl,
+                    special: (i === 5)
+                });
+                consecutiveFails = 0;
+                console.log(`✓ Ditemukan: ${i}.jpg`);
+            } else {
+                consecutiveFails++;
+                console.log(`✗ ${i}.jpg tidak ditemukan (gagal ke-${consecutiveFails})`);
+                if (consecutiveFails >= MAX_CONSECUTIVE && i > START_INDEX + 5) {
+                    console.log(`Berhenti scan di index ${i}`);
+                    break;
+                }
+            }
+            i++;
+            if (i > 1000) break;
+        }
+        
+        return found;
+    }
+    
+    // ========= RENDER GALERI DENGAN RETRY OTOMATIS =========
+    function loadImageWithRetry(imgElement, src, maxRetries = 3, delay = 1000) {
+        let retries = 0;
+        
+        function attemptLoad() {
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                imgElement.src = src;
+                imgElement.style.display = 'block';
+                const placeholder = imgElement.parentNode.querySelector('.placeholder-img');
+                if (placeholder) placeholder.remove();
+            };
+            tempImg.onerror = () => {
+                retries++;
+                if (retries < maxRetries) {
+                    console.log(`Retry ${retries} untuk ${src}`);
+                    setTimeout(attemptLoad, delay);
+                } else {
+                    console.log(`Gagal load ${src} setelah ${maxRetries} percobaan`);
+                    if (!imgElement.parentNode.querySelector('.placeholder-img')) {
+                        const ph = document.createElement('div');
+                        ph.className = 'placeholder-img';
+                        ph.innerHTML = `<span>🌑</span><span>gagal memuat</span><span style="font-size:0.6rem;">retry otomatis</span>`;
+                        imgElement.style.display = 'none';
+                        imgElement.parentNode.appendChild(ph);
+                    }
+                }
+            };
+            tempImg.src = src;
+        }
+        
+        attemptLoad();
+    }
+    
+    function renderGalleryWithFilter(imagesToShow) {
+        if (!galleryGrid) return;
+        galleryGrid.innerHTML = '';
+        
+        if (imagesToShow.length === 0) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty-message';
+            emptyDiv.innerHTML = `<p>Gambar Telah Dihapus</p><span style="font-size:0.7rem;">tidak ada koleksi dengan ID tersebut atau folder kosong</span>`;
+            galleryGrid.appendChild(emptyDiv);
+            return;
+        }
+        
+        imagesToShow.forEach(img => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            if (img.special) item.classList.add('special');
+            
+            const frame = document.createElement('div');
+            frame.className = 'photo-frame';
+            frame.style.cursor = 'pointer';
+            
+            const imageEl = document.createElement('img');
+            imageEl.alt = `collection-${img.index}`;
+            imageEl.style.display = 'block';
+            imageEl.loading = "lazy";
+            
+            // Gunakan retry mechanism
+            loadImageWithRetry(imageEl, img.src, 4, 800);
+            
+            // DOWNLOAD
+            frame.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fetch(img.src)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `koleksi-${img.index}.jpg`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    })
+                    .catch(() => {
+                        // fallback langsung ke src
+                        const a = document.createElement('a');
+                        a.href = img.src;
+                        a.download = `koleksi-${img.index}.jpg`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    });
+            });
+            
+            frame.appendChild(imageEl);
+            item.appendChild(frame);
+            
+            const cap = document.createElement('div');
+            cap.className = 'caption-foto';
+            cap.innerText = `#${img.index}`;
+            item.appendChild(cap);
+            galleryGrid.appendChild(item);
+        });
+    }
+    
+    function filterById(searchId) {
+        if (searchId === null || searchId === undefined || searchId === "" || isNaN(searchId)) {
+            currentFiltered = [...allImages];
+            searchStatus.innerText = `menampilkan semua (${currentFiltered.length} koleksi)`;
+        } else {
+            const idNum = parseInt(searchId, 10);
+            if (idNum < START_INDEX) {
+                currentFiltered = [];
+                searchStatus.innerText = `ID tidak valid, gunakan angka ≥ ${START_INDEX}`;
+            } else {
+                const found = allImages.filter(img => img.index === idNum);
+                currentFiltered = found;
+                if (found.length === 0) {
+                    searchStatus.innerText = `koleksi #${idNum} tidak ditemukan`;
+                } else {
+                    searchStatus.innerText = `menampilkan 1 koleksi (ID: ${idNum})`;
+                }
+            }
+        }
+        renderGalleryWithFilter(currentFiltered);
+        
+        if (allImages.length > 0) {
+            if (currentFiltered.length === allImages.length) {
+                dynamicCounter.innerHTML = `Total Images: ${allImages.length}`;
+            } else {
+                dynamicCounter.innerHTML = `Total Images: ${allImages.length} (menampilkan ${currentFiltered.length})`;
+            }
+        }
+    }
+    
+    // ========= LOADING 20 DETIK =========
+    async function startLoadingWithDelay() {
+        let elapsed = 0;
+        const totalDelay = 20;
+        const progressInterval = setInterval(() => {
+            elapsed += 0.1;
+            let percent = Math.min((elapsed / totalDelay) * 100, 100);
+            if (progressFill) progressFill.style.width = percent + '%';
+            const remaining = Math.max(0, Math.ceil(totalDelay - elapsed));
+            if (timerTextSpan) timerTextSpan.innerText = `${remaining} detik menuju koleksi`;
+            if (elapsed >= totalDelay) {
+                clearInterval(progressInterval);
+                if (timerTextSpan) timerTextSpan.innerText = `membuka koleksi...`;
+            }
+        }, 100);
+        
+        const imagesDetectedPromise = detectAllImages();
+        await new Promise(resolve => setTimeout(resolve, totalDelay * 1000));
+        const detected = await imagesDetectedPromise;
+        allImages = detected;
+        currentFiltered = [...allImages];
+        
+        if (allImages.length === 0) {
+            dynamicCounter.innerHTML = `Total Images: 0`;
+            renderGalleryWithFilter([]);
+        } else {
+            dynamicCounter.innerHTML = `Total Images: ${allImages.length}`;
+            renderGalleryWithFilter(currentFiltered);
+        }
+        
+        setTimeout(() => {
+            if (loadingOverlay) loadingOverlay.classList.add('hide');
+        }, 300);
+    }
+    
+    function setupSearch() {
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                const val = searchInput.value.trim();
+                if (val === "") filterById(null);
+                else filterById(parseInt(val, 10));
+            });
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                searchInput.value = "";
+                filterById(null);
+                searchStatus.innerText = "";
+                dynamicCounter.innerHTML = `Total Images: ${allImages.length}`;
+            });
+        }
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const val = searchInput.value.trim();
+                if (val === "") filterById(null);
+                else filterById(parseInt(val, 10));
+            }
+        });
+    }
+    
+    async function init() {
+        startTypingCycle();
+        setupSearch();
+        await startLoadingWithDelay();
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+    });
+</script>
+</body>
+</html>
