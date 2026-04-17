@@ -17,7 +17,7 @@
         html {
             font-size: 100%;
             scroll-behavior: smooth;
-            touch-action: pan-x pan-y; /* nonaktifkan zoom pinch */
+            touch-action: pan-x pan-y;
         }
 
         body {
@@ -72,7 +72,6 @@
             width: 100%;
         }
 
-        /* Toggle di pojok kanan bawah */
         .refresh-toggle {
             position: fixed;
             bottom: 20px;
@@ -480,8 +479,16 @@
             color: #b77effcc;
             font-size: 0.85rem;
             text-align: center;
-            gap: 12px;
+            gap: 8px;
             padding: 2rem;
+        }
+        .placeholder-img i {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+        .placeholder-img .small-text {
+            font-size: 0.65rem;
+            color: #8a7ab0;
         }
 
         .caption-foto {
@@ -502,8 +509,17 @@
             border: 1px dashed #b77eff60;
             margin: 1rem 0;
         }
+        .empty-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #b77eff;
+        }
+        .empty-message .refresh-hint {
+            font-size: 0.7rem;
+            color: #8a7ab0;
+            margin-top: 8px;
+        }
 
-        /* MODAL tanpa zoom */
         .modal {
             display: none;
             position: fixed;
@@ -674,7 +690,6 @@
 <div class="hero-glow"></div>
 <div class="stars"></div>
 
-<!-- Toggle di pojok kanan bawah -->
 <div class="refresh-toggle">
     <div class="toggle-downup" id="toggleDownUpBtn">
         <i class="fas fa-chevron-up"></i>
@@ -809,14 +824,12 @@
     const TIKTOK_USERNAME = "febryjw";
     tiktokLink.href = `https://www.tiktok.com/@${TIKTOK_USERNAME}`;
     
-    // Fungsi Music dari folder MY/1.mp3
     function toggleMusic() {
         if (!audioPlayer) {
             audioPlayer = new Audio(`${FOLDER_PATH}1.mp3`);
             audioPlayer.loop = true;
             audioPlayer.onerror = () => {
-                console.log('File musik tidak ditemukan di MY/1.mp3');
-                alert('File musik tidak ditemukan. Pastikan ada file 1.mp3 di folder MY/');
+                console.log('File musik tidak ditemukan');
             };
         }
         
@@ -825,7 +838,7 @@
             isMusicPlaying = false;
             musicBtn.innerHTML = '<i class="fas fa-music"></i> Music';
         } else {
-            audioPlayer.play().catch(e => console.log('Gagal play musik:', e));
+            audioPlayer.play().catch(e => console.log('Gagal play musik'));
             isMusicPlaying = true;
             musicBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
         }
@@ -833,7 +846,6 @@
     
     musicBtn.addEventListener('click', toggleMusic);
     
-    // Toggle down/up menu
     let menuOpen = false;
     toggleDownUpBtn.addEventListener('click', () => {
         menuOpen = !menuOpen;
@@ -851,9 +863,11 @@
         searchInput.value = "";
         searchStatus.innerHTML = "";
         dynamicCounter.innerHTML = `Total Koleksi: --`;
-        galleryGrid.innerHTML = `<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-pulse"></i> Memuat ulang...</div>`;
-        await loadMedia();
+        galleryGrid.innerHTML = `<div class="empty-message"><i class="fas fa-spinner fa-pulse"></i><p>Memuat ulang koleksi...</p></div>`;
+        
+        await loadMedia(true);
         filterById(null);
+        
         menuOpen = false;
         refreshMenu.classList.remove('show');
         toggleDownUpBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
@@ -914,13 +928,16 @@
         typeNext();
     }
     
-    function loadImageWithRetry(imgElement, src, maxRetries = 5, delay = 1500) {
+    function loadImageWithRetry(imgElement, src, maxRetries = 8, delay = 1200) {
         let retries = 0;
         
         function attemptLoad() {
             const tempImg = new Image();
+            const cacheBuster = `?t=${Date.now()}`;
+            const finalSrc = src + cacheBuster;
+            
             tempImg.onload = () => {
-                imgElement.src = src;
+                imgElement.src = finalSrc;
                 imgElement.style.display = 'block';
                 const placeholder = imgElement.parentNode.querySelector('.placeholder-img');
                 if (placeholder) placeholder.remove();
@@ -933,22 +950,23 @@
                     if (!imgElement.parentNode.querySelector('.placeholder-img')) {
                         const ph = document.createElement('div');
                         ph.className = 'placeholder-img';
-                        ph.innerHTML = `<i class="fas fa-image"></i><span>${src.split('/').pop()}</span>`;
+                        ph.innerHTML = `<i class="fas fa-image"></i><span>Gagal memuat</span><span class="small-text">Klik refresh untuk mencoba lagi</span>`;
                         imgElement.style.display = 'none';
                         imgElement.parentNode.appendChild(ph);
                     }
                 }
             };
-            tempImg.src = src;
+            tempImg.src = finalSrc;
         }
         attemptLoad();
     }
     
-    async function fileExists(url, timeoutMs = 300) {
+    async function fileExists(url, timeoutMs = 400) {
         return new Promise((resolve) => {
             const controller = new AbortController();
             const tid = setTimeout(() => controller.abort(), timeoutMs);
-            fetch(url, { method: 'HEAD', signal: controller.signal, cache: 'no-store' })
+            const cacheBuster = `?cb=${Date.now()}`;
+            fetch(url + cacheBuster, { method: 'HEAD', signal: controller.signal, cache: 'reload' })
                 .then(res => {
                     clearTimeout(tid);
                     resolve(res.ok);
@@ -980,11 +998,11 @@
         video.onerror = () => {
             callback(null);
         };
-        video.src = videoSrc;
+        video.src = videoSrc + `?t=${Date.now()}`;
         video.load();
     }
     
-    async function detectAllMedia() {
+    async function detectAllMedia(forceReload = false) {
         const found = [];
         let i = START_INDEX;
         let consecutiveFails = 0;
@@ -994,7 +1012,7 @@
             let foundFile = null;
             for (const ext of EXTENSIONS) {
                 const url = `${FOLDER_PATH}${i}${ext}`;
-                const exists = await fileExists(url, 250);
+                const exists = await fileExists(url, 350);
                 if (exists) {
                     foundFile = { index: i, src: url, type: ext === ".mp4" ? "video" : "image", special: (i === 5) };
                     break;
@@ -1028,7 +1046,7 @@
         galleryGrid.innerHTML = '';
         
         if (mediaList.length === 0) {
-            galleryGrid.innerHTML = `<div class="empty-message"><p><i class="fas fa-images"></i> Koleksi Kosong</p><span>Tambahkan file 1.jpg, 2.jpg dll ke folder MY/</span></div>`;
+            galleryGrid.innerHTML = `<div class="empty-message"><i class="fas fa-images"></i><p>Koleksi Tidak Ada</p><div class="refresh-hint"><i class="fas fa-sync-alt"></i> Silahkan refresh untuk memuat ulang</div></div>`;
             return;
         }
         
@@ -1042,13 +1060,17 @@
             
             if (media.type === 'video') {
                 const video = document.createElement('video');
-                video.src = media.src;
                 video.preload = "metadata";
                 video.style.cursor = 'pointer';
                 video.style.width = '100%';
                 video.style.height = 'auto';
+                video.controls = false;
                 getVideoThumbnail(media.src, (thumbnail) => {
                     if (thumbnail) video.poster = thumbnail;
+                });
+                video.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openModal(media.src, media.type, media.index);
                 });
                 frame.appendChild(video);
                 frame.addEventListener('click', () => openModal(media.src, media.type, media.index));
@@ -1058,7 +1080,7 @@
                 img.style.cursor = 'pointer';
                 img.style.width = '100%';
                 img.style.display = 'block';
-                loadImageWithRetry(img, media.src, 5, 1500);
+                loadImageWithRetry(img, media.src, 8, 1200);
                 frame.appendChild(img);
                 frame.addEventListener('click', () => openModal(media.src, media.type, media.index));
             }
@@ -1079,9 +1101,10 @@
         currentModalTypeGlobal = type;
         currentModalIndexGlobal = idx;
         modalMedia.innerHTML = '';
+        const cacheBuster = `?t=${Date.now()}`;
         if (type === 'video') {
             const video = document.createElement('video');
-            video.src = src;
+            video.src = src + cacheBuster;
             video.controls = true;
             video.autoplay = false;
             video.style.maxWidth = '100%';
@@ -1089,7 +1112,7 @@
             modalMedia.appendChild(video);
         } else {
             const img = document.createElement('img');
-            img.src = src;
+            img.src = src + cacheBuster;
             img.alt = `Koleksi ${idx}`;
             modalMedia.appendChild(img);
         }
@@ -1108,26 +1131,10 @@
     });
     
     modalDownloadBtn.addEventListener('click', () => {
-        fetch(currentModalSrcGlobal)
-            .then(res => res.blob())
-            .then(blob => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `koleksi-${currentModalIndexGlobal}.${currentModalTypeGlobal === 'video' ? 'mp4' : 'jpg'}`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            })
-            .catch(() => {
-                const a = document.createElement('a');
-                a.href = currentModalSrcGlobal;
-                a.download = `koleksi-${currentModalIndexGlobal}.${currentModalTypeGlobal === 'video' ? 'mp4' : 'jpg'}`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
+        const link = document.createElement('a');
+        link.href = currentModalSrcGlobal + `?download=${Date.now()}`;
+        link.download = `koleksi-${currentModalIndexGlobal}.${currentModalTypeGlobal === 'video' ? 'mp4' : 'jpg'}`;
+        link.click();
     });
     
     function filterById(searchId) {
@@ -1151,11 +1158,11 @@
         }
     }
     
-    async function loadMedia() {
+    async function loadMedia(forceReload = false) {
         if (isLoading) return;
         isLoading = true;
         
-        const detected = await detectAllMedia();
+        const detected = await detectAllMedia(forceReload);
         allMedia = detected;
         currentFiltered = [...allMedia];
         
@@ -1181,12 +1188,12 @@
             if (timerTextSpan) timerTextSpan.innerText = `${remaining} detik menuju koleksi`;
             if (elapsed >= totalDelay) {
                 clearInterval(progressInterval);
-                timerTextSpan.innerText = `0 detik, membuka koleksi...`;
+                timerTextSpan.innerText = `Membuka koleksi...`;
             }
         }, 100);
         
         await new Promise(resolve => setTimeout(resolve, totalDelay * 1000));
-        await loadMedia();
+        await loadMedia(false);
         
         setTimeout(() => {
             if (loadingOverlay) loadingOverlay.classList.add('hide');
