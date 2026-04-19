@@ -206,7 +206,7 @@
         <img class="loading-avatar" src="MY/loading.jpg" alt="loading" onerror="this.src='https://n.uguu.se/ztaVUtjW.jpeg'">
         <div class="loading-text">Membuka Halaman Koleksi...</div>
         <div class="progress-container"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="timer-text" id="timerText">60 detik menuju koleksi</div>
+        <div class="timer-text" id="timerText">30 detik menuju koleksi</div>
     </div>
 </div>
 
@@ -713,7 +713,7 @@
         
         const fetchTask = detectAllMediaConcurrently();
         
-        let el = 0; const totalTime = 60;
+        let el = 0; const totalTime = 30;
         const progressInterval = setInterval(() => {
             el += 0.1;
             let percent = Math.min((el / totalTime) * 100, 100);
