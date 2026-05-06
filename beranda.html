@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MY FUTURE WIFE</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- CSS Eksternal -->
+    <link rel="stylesheet" href="bahan/c.css">
+</head>
+<body>
+    <div class="galaxy-bg"></div>
+    <div class="nebula"></div>
+    <canvas id="bg-canvas" class="layer"></canvas>
+    <canvas id="cursor-canvas" class="layer"></canvas>
+
+    <!-- LOADING SCREEN (7 Detik) -->
+    <div id="loading-screen">
+        <div class="modern-loader">
+            <div class="loader-ring-outer"></div>
+            <div class="loader-ring-inner"></div>
+            <div class="loader-core"></div>
+        </div>
+        <div class="progress-container"><div id="progress-bar"></div></div>
+        <div class="loading-text" id="load-text">SYSTEM INITIALIZATION... 0%</div>
+    </div>
+
+    <!-- Laser Biometric Scanner -->
+    <div id="password-screen" class="hidden">
+        <div class="security-panel">
+            <div class="scanner-box">
+                <i class="fas fa-fingerprint" id="fingerprint-icon"></i>
+                <div class="scan-laser"></div>
+            </div>
+            <input type="password" id="pass-input" class="cyber-input" placeholder="PASSCODE">
+            <button class="auth-btn" onclick="checkPassword()">UNLOCK</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="hidden">
+        <header class="ui-element">
+            <!-- CHRONOS BOARD -->
+            <div class="chronos-board">
+                <div class="time-box"><div class="time-val" id="tb-hr">00</div><div class="time-lbl">JAM</div></div>
+                <div class="time-sep">:</div>
+                <div class="time-box"><div class="time-val" id="tb-min">00</div><div class="time-lbl">MENIT</div></div>
+                <div class="time-sep">:</div>
+                <div class="time-box"><div class="time-val" id="tb-sec">00</div><div class="time-lbl">DETIK</div></div>
+            </div>
+
+            <h1 class="main-title" id="type-title" style="width:0;">MY FUTURE WIFE</h1>
+            
+            <div class="update-badge">
+                <span class="badge-line-1">&lt; LAST UPDATE: <span id="update-date">--/--/----</span> &gt;</span><br>
+                <span class="badge-line-2">&lt; SYSTEM_VERSION: 1.0.0 &gt;</span>
+            </div>
+            
+            <div class="memory-board">
+                <p class="memory-text" id="quote-text">Memuat protokol memori...</p>
+            </div>
+            
+            <div class="action-toolbar">
+                <button class="tool-btn" onclick="toggleZen()" title="Zen Mode (Sembunyikan UI)"><i class="fas fa-eye-slash"></i></button>
+                <button class="tool-btn" onclick="togglePrivacy()" title="Mode Privasi (Blur Layar)"><i class="fas fa-lock"></i></button>
+                <button class="tool-btn" onclick="shuffleMemory()" title="Acak Galeri (Random)"><i class="fas fa-random"></i></button>
+                <button class="tool-btn" onclick="toggleAutoScroll()" id="scroll-btn" title="Auto Scroll"><i class="fas fa-angle-double-down"></i></button>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterGallery('all', this)">Semua</button>
+                <button class="filter-btn" onclick="filterGallery('photo', this)">Foto</button>
+                <button class="filter-btn" onclick="filterGallery('video', this)">Video</button>
+                <button class="filter-btn" onclick="filterGallery('favorite', this)">Favorit</button>
+            </div>
+        </header>
+
+        <div class="gallery-grid" id="gallery-container"></div>
+
+        <div class="combo-fab ui-element">
+            <div class="audio-viz" id="audio-viz">
+                <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            </div>
+            
+            <div class="fab-btn-wrap">
+                <svg class="progress-ring" width="60" height="60" onclick="scrollToTop()" title="Scroll ke Atas">
+                    <circle class="progress-ring__circle" id="scroll-circle" cx="30" cy="30" r="26" />
+                </svg>
+                <div class="rocket-music-btn" id="music-btn" onclick="toggleMusic(event)" title="Putar/Jeda Musik">🚀</div>
+            </div>
+            <audio id="bg-audio" loop><source src="media/1.mp3" type="audio/mpeg"></audio>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="hidden">
+        <div class="lb-bg" id="lb-bg" onclick="closeLightbox()"></div>
+        <div class="lb-index" id="lb-index">[ 0 / 0 ]</div>
+        <div class="lb-stardate" id="lb-stardate">MEM-REC: 0000</div>
+        
+        <button class="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+        <button class="nav-btn nav-prev" onclick="navigateMedia(-1, event)"><i class="fas fa-angle-left"></i></button>
+        
+        <div class="lb-content">
+            <div class="lb-media" id="lb-media-container"></div>
+            
+            <div class="lb-controls-wrapper">
+                <button id="fav-btn" class="action-icon" onclick="toggleFavorite()"><i class="fas fa-heart"></i></button>
+                <button class="action-icon" onclick="rotateMedia()"><i class="fas fa-sync-alt"></i></button>
+                <button id="slideshow-btn" class="action-icon" onclick="toggleSlideshow()"><i class="fas fa-play"></i></button>
+                <a id="download-btn" class="action-icon" href="#" download><i class="fas fa-download"></i></a>
+            </div>
+        </div>
+        
+        <button class="nav-btn nav-next" onclick="navigateMedia(1, event)"><i class="fas fa-angle-right"></i></button>
+    </div>
+
+    <!-- JS Eksternal -->
+    <script src="bahan/j.js"></script>
+</body>
+</html>
