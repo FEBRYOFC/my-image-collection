@@ -245,7 +245,7 @@ function detectAndLoadMedia(i, cardElement) {
             return;
         }
         const ext = formats[currentFormatIdx];
-        const url = `media/${i}.${ext}`;
+        const url = `MY/${i}.${ext}`;
         const isVideo = ext === 'mp4';
         
         if (isVideo) {
